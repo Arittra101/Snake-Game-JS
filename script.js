@@ -1,9 +1,10 @@
 
 let player_score = 0;
 var game_intervel;
-var game_speed = 300;
+var game_speed = 250;
 let level_Val = 0;
-
+let food;
+let powX,powY;
 // const value = console.log(value);
 
 
@@ -12,11 +13,22 @@ const score = document.querySelector(".score");
 const level = document.querySelector(".level");
 const high_score = document.querySelector(".high-score");
 
+const power = () => {
+
+    let powX = Math.floor(Math.random() * 30) + 1;
+    let powY = Math.floor(Math.random() * 30) + 1;
+
+    let pw = `<div class="power" style="grid-area: ${powY} / ${powX}"></div>`
+    food+=pw;
+
+}
+
 const create_div = () => {
 
     // console.log("d");
     score.innerHTML = `score = ${player_score}`;
     level.innerHTML = `level = ${level_Val}`;
+    high_score.innerHTML = `high-score = ${localStorage.getItem('High_Score')}`;
 
     if (localStorage.getItem('High_Score') === null) {
         localStorage.setItem('High_Score', 0);
@@ -35,17 +47,24 @@ const create_div = () => {
 
 const inc_scor = () => {
 
+
+    // if (player_score % 40 == 0)
+    // {
+    //     power();
+    // }
+        
     player_score += 10;
+
 
 
     if (player_score % 20 == 0) {
 
-       
+
         if (game_speed - 20 > 0 && player_score != 0) {
             level_Val += 1;
             game_speed -= 30;
             clearInterval(game_intervel);
-            game_intervel =  setInterval(init_game,game_speed);
+            game_intervel = setInterval(init_game, game_speed);
             console.log(game_speed);
         }
 
@@ -61,6 +80,7 @@ let posX = 1;
 let posY = 1;
 let valX = 0, valY = 0;
 let snakeBody = [];
+
 
 const foodPosition = () => {
 
@@ -78,29 +98,31 @@ const check = () => {
         posY = 1;
         level_Val = 0;
         player_score = 0;
-        
+
         clearInterval(game_intervel);
-        game_intervel =  setInterval(init_game,300);
+        game_intervel = setInterval(init_game, 300);
         snakeBody = [];
         create_div();
+        alert("Game is over! ");
 
     }
 }
+
+
 //this function is called after 1000ms
 const init_game = () => {
 
     // console.log(game_speed);
 
+    
     cnt++;
-    let food = `<div class="food" style="grid-area: ${foodY} / ${foodX}"></div>`;
+    food = `<div class="food" style="grid-area: ${foodY} / ${foodX}"></div>`;
 
     if (foodX === posX && foodY === posY) {
         foodPosition();
         inc_scor();
         create_div();
         snakeBody.push([foodX, foodY]);
-
-       
 
     }
 
@@ -116,6 +138,22 @@ const init_game = () => {
     for (let i = 0; i < snakeBody.length; i++) {
         // console.log("count cnt" + cnt + "-> " + snakeBody[i][1] + " " + snakeBody[i][0]);
         food += `<div class="snake" style = "grid-area: ${snakeBody[i][1]}/${snakeBody[i][0]}"></div>`;
+
+        if(i!=0 && snakeBody[0][0] == snakeBody[i][0] && snakeBody[0][1] == snakeBody[i][1])
+        {
+            valX = 0;
+            valY = 0;
+            posX = 1;
+            posY = 1;
+            level_Val = 0;
+            player_score = 0;
+    
+            clearInterval(game_intervel);
+            game_intervel = setInterval(init_game, 300);
+            snakeBody = [];
+            create_div();
+            alert("Game is over! ");
+        }
     }
 
 
@@ -127,24 +165,24 @@ const init_game = () => {
 }
 
 const changePOS = (e) => {
-    if (e.key === "ArrowDown") {
+    if (e.key === "ArrowDown" && valY !=-1) {
         valY = 1;
         valX = 0;
         // console.log(e.key);
     }
-    else if (e.key === "ArrowUp") {
+    else if (e.key === "ArrowUp" && valY!=1) {
         valY = -1;
         valX = 0;
         //console.log(e.key);
 
     }
-    else if (e.key === "ArrowRight") {
+    else if (e.key === "ArrowRight" && valX!=-1) {
         valY = 0;
         valX = 1;
         //console.log(e.key);
 
     }
-    else if (e.key === "ArrowLeft") {
+    else if (e.key === "ArrowLeft" && valX!=1) {
         valY = 0;
         valX = -1;
         //console.log(e.key);
@@ -156,6 +194,6 @@ create_div();
 document.addEventListener("keydown", changePOS);
 
 
-game_intervel = setInterval(init_game, game_speed); 
+game_intervel = setInterval(init_game, game_speed);
 // console.log(game_speed);
 

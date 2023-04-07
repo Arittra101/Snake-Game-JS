@@ -49,3 +49,11 @@ body{
    
 
 }
+
+.power{
+
+    background-color: rgb(236, 42, 42);
+    width: 5px;
+    height: 5px;
+    border-radius: 5px;
+}
